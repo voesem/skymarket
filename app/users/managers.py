@@ -3,32 +3,37 @@ from django.contrib.auth.models import BaseUserManager
 
 class CustomUserManager(BaseUserManager):
     """ Кастомный менеджер для модели пользователя. """
-
     use_in_migrations = True
 
-    def _create_user(self, email, password, **extra_fields):
-        """ Метод для создания пользователя с заданными email и паролем. """
-
+    def create_user(self, email, first_name, last_name, phone, password=None):
+        """ Функция создания обычного пользователя. """
         if not email:
-            raise ValueError('Необходимо указать email.')
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+            raise ValueError('Поле email должно быть заполнено.')
+        user = self.model(
+            email=self.normalize_email(email),
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
+            role='member'
+        )
+        user.is_active = True
         user.set_password(password)
         user.save(using=self._db)
+
         return user
 
-    def create_user(self, email, password=None, **extra_fields):
-        """ Метод для создания обычного пользователя. """
+    def create_superuser(self, email, first_name, last_name, phone, password=None):
+        """ Функция создания суперпользователя. """
+        user = self.create_user(
+            email,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
+            password=password,
+            is_staff=True,
+            is_superuser=True,
+            role='admin'
+        )
 
-        extra_fields.setdefault('is_superuser', False)
-        return self._create_user(email, password, **extra_fields)
-
-    def create_superuser(self, email, password, **extra_fields):
-        """ Метод для создания суперпользователя. """
-
-        extra_fields.setdefault('is_superuser', True)
-
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Cуперпользователь должен иметь флаг is_superuser=True.')
-
-        return self._create_user(email, password, **extra_fields)
+        user.save(using=self._db)
+        return user
