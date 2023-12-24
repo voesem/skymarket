@@ -26,10 +26,7 @@ urlpatterns = [
     path("api/redoc-tasks/", include("redoc.urls")),
     path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
 
-    path("auth/", include("djoser.urls")),
-    path("auth/", include("djoser.urls.jwt")),
-
-    # path("", include("ads.urls", namespace="courses")),
-    # path("users/", include("users.urls", namespace="users")),
+    path("api/ads/", include("ads.urls", namespace="ads")),
+    path("api/", include(("users.urls", "users"), namespace="users")),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
