@@ -27,7 +27,7 @@ class Comment(models.Model):
 
     text = models.TextField(verbose_name='текст')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='автор', **NULLABLE)
-    ad = models.ForeignKey(Ad, on_delete=models.CASCADE, verbose_name='объявление')
+    ad = models.ForeignKey(Ad, on_delete=models.CASCADE, verbose_name='объявление', **NULLABLE)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='время и дата создания', **NULLABLE)
 
     def __str__(self):
